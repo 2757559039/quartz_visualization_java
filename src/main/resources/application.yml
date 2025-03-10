@@ -1,0 +1,89 @@
+server :
+  port : 8002
+
+spring:
+  application:
+    name: visualization
+  jackson:
+    # json 序列化排除值为 null 的属性
+    default-property-inclusion: non_null
+
+  datasource:
+      type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://114.132.71.250:3307/visualization?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true
+      url: jdbc:mysql://localhost:3306/visualization?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true
+      username: root
+      password: 123456
+      druid:
+        # 连接池基础配置
+        initial-size: 5
+        min-idle: 5
+        max-active: 20
+    #
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+
+#        # 监控配置
+#        stat-view-servlet:
+#          enabled: true
+#          url-pattern: /druid/*
+#        filter:
+#          stat:
+#            log-slow-sql: true
+#            slow-sql-millis: 1000
+
+org:
+  quartz:
+    scheduler:
+      instance-name: cluster_scheduler
+      instance-id: AUTO
+      rmi-export: false
+      rmi-proxy: false
+      wrapJobExecutionInUserTransaction: false
+      batch-trigger-acquisition-max-count: 1
+      class-load-helper-class: com.atguigu.cloud.quartz.config.CascadingClassLoadHelper
+      make-scheduler-thread-daemon: true
+
+    threadpool:
+      thread-pool-class: org.quartz.simpl.SimpleThreadPool
+      thread-count: 10
+      thread-priority: 5
+      threads-inherit-context-class-loader-of-initializing-thread: true
+      make-threads-daemons: true
+
+    jobstore:
+      isClustered: true
+      useProperties: false
+      tablePrefix: QRTZ_
+      clusterCheckinInterval: 5000
+      driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      dataSource: quartz
+      misfireThreshold: 60000
+      maxMisfiresToHandleAtATime: 20
+      dontSetAutoCommitFalse: false
+      selectWithLockSQL: SELECT * FROM {0}LOCKS WHERE LOCK_NAME = ? FOR UPDATE
+      txIsolationLevelSerializable: false
+      job-store-class: org.quartz.impl.jdbcjobstore.JobStoreTX
+    datasource:
+      driver: com.mysql.cj.jdbc.Driver
+#      URL: jdbc:mysql://114.132.71.250:3307/visualization?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true
+      URL: jdbc:mysql://localhost:3306/visualization?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true
+      user: root
+      password: 123456
+      maxConnections: 5
+
+knife4j:
+  #  增强启动
+  enable: true
+  setting:
+    #    设置侧边栏中的swagger model的名字:用于展示实体类的
+    swagger-model-name: 实体类结构
+    #    关闭open API
+    #    enable-open-api: false
+    #   是否开启文档管理
+    enable-document-manage: true
+
+
