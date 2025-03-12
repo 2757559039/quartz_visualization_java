@@ -8,12 +8,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="visualization" />
+        <module name="quartz_visualization" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="19" />
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="quartz_visualization" options="-parameters" />
       <module name="visualization" options="-parameters" />
     </option>
   </component>

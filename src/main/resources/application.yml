@@ -44,7 +44,7 @@ org:
       rmi-proxy: false
       wrapJobExecutionInUserTransaction: false
       batch-trigger-acquisition-max-count: 1
-      class-load-helper-class: com.atguigu.cloud.quartz.config.CascadingClassLoadHelper
+      class-load-helper-class: com.visualization.cloud.quartz.config.CascadingClassLoadHelper
       make-scheduler-thread-daemon: true
 
     threadpool:

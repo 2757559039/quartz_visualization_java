@@ -1,18 +1,59 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+
     <modelVersion>4.0.0</modelVersion>
+
+    <url>https://github.com/2757559039/quartz_visualization_java</url>
+
+    <groupId>io.github.2757559039</groupId>
+    <artifactId>quartz_visualization</artifactId>
+    <version>0.0.8</version>
+    <name>quartz_visualization</name>
+    <description>Enhance Quartz with Vue3 visualization, Groovy-driven dynamic workflows, and SSE real-time monitoring for a powerful, adaptive scheduling system</description>
+
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>zzh</id>
+            <name>zzh</name>
+            <email>2757559039@qq.com</email>
+            <roles>
+                <role>Project Manager</role>
+                <role>Architect</role>
+            </roles>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/2757559039/quartz_visualization_java/issuse</url>
+    </issueManagement>
+    <scm>
+        <connection>https://github.com/2757559039/quartz_visualization_java.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:2757559039/quartz_visualization_java.git
+        </developerConnection>
+        <url>https://github.com/2757559039/quartz_visualization_java</url>
+    </scm>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.8</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.atguigu.cloud</groupId>
-    <artifactId>visualization</artifactId>
-    <version>1.0-SNAPSHOT</version>
+
+
     <properties>
+        <maven.test.skip>true</maven.test.skip>
         <java.version>17</java.version>
         <mybatis.version>3.5.7</mybatis.version>
         <mysql.version>8.0.11</mysql.version>
@@ -20,104 +61,240 @@
         <lombok.version>1.18.28</lombok.version>
         <swagger3.version>2.2.0</swagger3.version>
     </properties>
-<dependencies>
+    <dependencies>
 
 
-<!--    fastjson-->
-    <dependency>
-        <groupId>com.alibaba</groupId>
-        <artifactId>fastjson</artifactId>
-        <version>1.2.83</version>
-    </dependency>
+        <!--    fastjson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.83</version>
+        </dependency>
 
 
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-        <version>3.5.7</version>
-    </dependency>
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.alibaba</groupId>
-        <artifactId>druid-spring-boot-3-starter</artifactId>
-        <version>${druid.version}</version> <!-- Druid版本 -->
-    </dependency>
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${lombok.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-validation</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-context</artifactId>
-        <version> 4.1.3</version>
-    </dependency>
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        <version>${swagger3.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.7</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
+            <version>${druid.version}</version> <!-- Druid版本 -->
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-context</artifactId>
+            <version> 4.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${swagger3.version}</version>
+        </dependency>
 
-    <dependency>
-        <groupId>cn.hutool</groupId>
-        <artifactId>hutool-all</artifactId>
-        <version>5.7.6</version>
-    </dependency>
-    <!--SpringBoot集成quartz-->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-quartz</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.mchange</groupId>
-        <artifactId>c3p0</artifactId>
-        <version>0.9.5.5</version>
-    </dependency>
-    <dependency>
-        <groupId>com.ibm.icu</groupId>
-        <artifactId>icu4j</artifactId>
-        <version>70.1</version>
-    </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.6</version>
+        </dependency>
+        <!--SpringBoot集成quartz-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.5.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>70.1</version>
+        </dependency>
 
-    <dependency>
-        <groupId>com.github.xiaoymin</groupId>
-        <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-        <!--目前最新版本,注意,该版本与springboot3.4不兼容,可使用springboot3.2.8-->
-        <version>4.5.0</version>
-    </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <!--目前最新版本,注意,该版本与springboot3.4不兼容,可使用springboot3.2.8-->
+            <version>4.5.0</version>
+        </dependency>
 
-    <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>3.0.17</version>
-        <type>pom</type>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-<!--    web-->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>3.0.17</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!--    web-->
 
-</dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+
+
+    </dependencies>
+
+
+    <profiles>
+        <profile>
+            <!--注意,此id必须与setting.xml中指定的一致-->
+            <id>central</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <excludes>
+                            <exclude>application.yml</exclude> <!-- 排除该文件 -->
+                        </excludes>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.1</version>
+                    </plugin>
+                    <!--发布到中央SNAPSHOT仓库插件-->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.6.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <!--                            <publishRelease>true</publishRelease>-->
+                            <!--                            <serverId>ossrh</serverId>-->
+                            <!--                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
+                            <!--                            <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+                        </configuration>
+                    </plugin>
+                    <!--                    &lt;!&ndash;发布到中央RELEASE仓库插件&ndash;&gt;-->
+                    <!--                    <plugin>-->
+                    <!--                        <groupId>org.apache.maven.plugins</groupId>-->
+                    <!--                        <artifactId>maven-release-plugin</artifactId>-->
+                    <!--                        <version>2.5.3</version>-->
+                    <!--                        <configuration>-->
+                    <!--                            <autoVersionSubmodules>true</autoVersionSubmodules>-->
+                    <!--                            <useReleaseProfile>false</useReleaseProfile>-->
+                    <!--                            <releaseProfiles>release</releaseProfiles>-->
+                    <!--                            <goals>deploy</goals>-->
+                    <!--                        </configuration>-->
+                    <!--                    </plugin>-->
+
+                    <!--ok-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.1.3</version>
+                    </plugin>
+                    <!--生成源码插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.13.0</version>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.2.2</version>
+                    </plugin>
+
+                    <!--ok-->
+                    <!--生成API文档插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <encoding>UTF-8</encoding>
+                            <docencoding>UTF-8</docencoding>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!--ok-->
+                    <!--gpg插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+
+            <!--ok-->
+            <distributionManagement>
+                <snapshotRepository>
+                    <!--注意,此id必须与setting.xml中指定的一致-->
+                    <id>central</id>
+                    <url>https://s01.oss.sonatype.org/</url>
+                </snapshotRepository>
+
+                <repository>
+                    <id>central</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+
+    </profiles>
+
 </project>
