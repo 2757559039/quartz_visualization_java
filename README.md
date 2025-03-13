@@ -433,41 +433,182 @@ CREATE TABLE `v_sse_send_info` (
 [使用配套前端]访问前端仓库,拉取前端组件:https://github.com/2757559039/quartz_visualization_vue 
 并选择其端口号,即可完成配置,多个微服务可以共用一个前端框架
 
-## 3. 快速入门
-**目标**：5分钟内创建一个每秒执行一次的定时任务  
+## 3. 自定义类快速入门
+**目标**：创建四大自定义类
 
-1. **进入任务管理页面**  
-   - 导航栏点击 **任务管理** > **新增任务**  
+### 创建自定义job类
+创建job逻辑类必须要继承QuartzJobBeanAbstract并实现executeInternal方法
+```java
+public class testjob extends QuartzJobBeanAbstract {
+    @Override
+    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+        System.out.println("testjob");
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = dateformat.format(System.currentTimeMillis());
+        
+        System.out.println("执行时间："dateStr  );
+    }
+}
 
-2. **填写任务信息**  
-   - **任务类名**：`com.example.TestJob`（默认类示例）  
-   - **任务分组**：`default`  
-   - **触发器类型**：选择 `SimpleTrigger`，设置间隔为 `1秒`  
-   - 点击 **提交**  
+```
+### 创建自定义trigger类
+必须要继承TriggerAbstract,并且如果是创建触发器,则重写对应类别的create前缀方法
+```java
+public class triiger extends TriggerAbstract {
 
-3. **启动任务**  
-   - 在任务列表中，找到新增任务，点击 **恢复**  
-   - 任务状态变为“运行中”，每秒执行一次  
+@Override
+    public CronTrigger CreateCronTrigger(JobDetail jobDetail) throws ClassNotFoundException {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        // 将当前时间加1秒
+        LocalDateTime newDateTime = currentDateTime.plusSeconds(1);
+        // 定义格式化模式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // 将LocalDateTime格式化为字符串
+        String formattedDate = newDateTime.format(formatter);
+    System.out.println("执行了子类的");
+    CronTrigger a=
+            TriggerBuilder.newTrigger()
+            .withIdentity("1234","1234")
+            .withSchedule(CronScheduleBuilder
+                    .cronSchedule("0/1 * * * * ?")
+            )
+            .startAt(Date.valueOf(formattedDate))
+            .startNow()
+            .forJob(jobDetail)
+            // 设置结束时间,默认无穷大
+            .endAt(Date.valueOf("2099-12-31"))
+            //设置优先级
+            .withPriority(5)
+            .build();
+    System.out.println(a);
+        return a;
+
+    }
+
+
+}
+```
+### 创建自定义jobdetial类
+继承CreatJobDetail并实现对应的方法,同时必须构造器注入applicationContext
+```java
+public class DefaultJobDetail111 extends CreatJobDetail {
+    public DefaultJobDetail111(ApplicationContext applicationContext) {
+        super(applicationContext);
+    }
+
+    @Override
+    public JobDetail createdetail(String Jobclassname, String Jobname, String Jobgroup, String Description) throws ClassNotFoundException {
+        Class<? extends QuartzJobBeanAbstract> jobClass = this.applicationContext.getType(Jobclassname).asSubclass(QuartzJobBeanAbstract.class);
+        System.out.println(jobClass);
+        JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(Jobname, Jobgroup).withDescription(Description).storeDurably().build();
+        return jobDetail;
+    }
+
+
+}
+```
+### 创建自定义更新触发器类
+必须要继承TriggerAbstract,并且如果是更新触发器,则重写对应类别的update前缀方法
+```java
+public class update_trigger111 extends TriggerAbstract {
+    @Override
+    public CronTrigger updateCrontrigger (TriggerBuilder triggerBuilder){
+        CronTrigger build =(CronTrigger)  triggerBuilder.withSchedule(
+                        CronScheduleBuilder
+                                .cronSchedule("2/10 * * * * ?")
+                                // 设置时区,默认上海
+                                .inTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
+                )
+                .startAt(Date.valueOf("2024-12-13"))
+                // 设置结束时间,默认无穷大
+                .endAt(Date.valueOf("9999-12-31"))
+                //设置优先级
+                .withPriority(Integer.parseInt("5"))
+                .build();
+
+        return build;
+
+    }
+}
+
+```
+
+
    
 ## 4. 功能详解
-### 4.1 任务管理
+### 4.1 可视化模块
+#### 4.1.1 增加策略
 - **新增任务**  
   支持两种模式：  
   - **默认模式**：直接填写类名、分组、触发器参数  
   - **自定义模式**：需先在 **脚本管理** 中上传 Groovy 脚本并注册为 Bean  
-
-- **任务操作**  
-  - **启动/停止**：单个任务或一键启停所有任务  
-  - **立即执行**：手动触发任务（仅限运行中的任务）  
-  - **模糊搜索**：通过类名或分组快速定位任务  
-
-### 4.2 触发器管理
+  
 - **挂载触发器**  
-  - 单个 Job 可挂载多个触发器，支持 `CronTrigger` 和 `SimpleTrigger`  
-  - 示例：为同一个 Job 添加每日 0 点和每小时执行一次的触发器  
+  同样支持两种模式：  
+  和新增任务类似,但是是通过选择任务分组,任务名的方法来设置任务名,且无法设置任务的详细属性,只能设置触发器
+  - **默认模式**：直接填写类名、分组、触发器参数  
+  - **自定义模式**：需先在 **脚本管理** 中上传 Groovy 脚本并注册为 Bean  
+  
+- **添加空闲任务**  
+添加一个没有触发器等待调度的任务
+  同样支持两种模式：  
+  - **默认模式**：直接填写类名、分组、
+  - **自定义模式**：需先在 **脚本管理** 中上传 Groovy 脚本并注册为 Bean  
 
-### 4.3 脚本管理
-1. **上传脚本**  
+#### 4.1.2 删除策略
+- **删除任务**  
+删除一个任务连同这个任务所挂载的所有触发器也一并删除
+
+- **删除触发器**  
+删除一个触发器
+
+- **删除所有任务和所有触发器**  
+慎用!!!
+
+#### 4.1.3 修改策略
+- **更改触发器参数**  
+  同样支持两种模式：  
+  - **默认模式**：重新填写需要更新的参数
+  - **自定义模式**：需先在 **脚本管理** 中上传 Groovy 脚本并注册为 Bean,并且要注意,上传的类的类别必须是带有update前缀的,同时在编写脚本时候,要实现对应触发器的update方法,而不是普通的createtrigger方法
+
+- **更换触发器**  
+选择旧的触发器,并选择创建新的触发器的参数,这个操作可以更改触发器的类别
+
+- **更改任务**  
+可以更改任务的job类,和任务的描述
+
+
+#### 4.1.4 查询策略
+- **根据分组查询**  
+直接选完事了
+
+- **输入框模糊搜索**  
+同时直接匹配四个值,任务名,任务组,任务类名,描述
+
+#### 4.1.5 启动策略
+- **恢复任务**  
+暂停这个任务下的所有触发器
+
+- **恢复触发器**  
+单独恢复某个触发器
+
+- **恢复所有任务和所有触发器**  
+恢复所有任务和触发器,同时开启`立即执行一次`的功能
+
+#### 4.1.6 停止策略
+- **暂停任务**  
+暂停这个任务下的所有触发器,但是触发器可以单独恢复
+
+- **暂停触发器**  
+单独暂停某个触发器
+
+- **暂停所有任务和所有触发器**  
+同时所有新增的触发器或任务都默认是暂停状态,且禁用`立即执行一次`的功能
+
+
+### 4.2 动态化模块
+#### 4.2.1 上传功能
+**上传脚本**  
    - 进入 **脚本管理** > **上传脚本**，填写 Groovy 脚本信息  
    - 示例脚本：  
      ```groovy
@@ -477,14 +618,35 @@ CREATE TABLE `v_sse_send_info` (
          }
      }
      ```
-2. **注册与卸载**  
-   - **安装**：将脚本注册为 Spring Bean，供任务调用  
-   - **卸载**：从 JVM 和 Bean 容器中移除脚本  
-   
+	 
+#### 4.2.2 脚本管理功能
 
-### 4.4 监控平台
+**基本功能**  
+   - **安装**：将脚本注册为 Spring Bean，并被groovy编译,供定时框架发现和使用  
+   - **删除**：从数据库直接删除
+   - **查看**: 查看脚本内容
+   
+   
+**更新**
+可以更新脚本内容,除了job在更改后,会直接影响定时框架,其他的更新,只是更新了任务和触发器的构造器,已经构造出的jobdetial和trigger不会有影响
+
+#### 4.2.3 虚拟类管理功能
+**卸载**
+从 JVM 和 Bean 容器中移除虚拟类
+
+### 4.3 监控平台模块
+#### 4.3.1 监控模块的使用前提
+首先需要在继承了QuartzJobBeanAbstract中使用setSseData
+```java
+protected  final void setSseData(String key, String data)
+```
+setSseData存在两个参数,一个是唯一标识key,一个是数据,可以传输任意你需要的数据,将其转成字符串形式即可
+key的来源是持久化在数据库中的日志的key的所有种类列表,所以无法额外删除和创建空key,只能在job类中创建
+#### 4.3.2 日志管理的使用
+选择key,和日期既可以实现以下两个功能
+
 - **实时监控**  
-  - 查看任务执行状态、成功率、耗时等指标（SSE 推送）  
+  - 查看任务日志（SSE实时推送） 
 - **历史记录**  
   - 按日期筛选任务执行日志，支持清空过期数据（保留 30 天）  
 
@@ -550,7 +712,7 @@ return new Object();
 
 --- 
 
-**版本：0.0.12 | 更新日期：2025-03-12**
+**版本：0.0.12 | 更新日期：2025-03-13**
 
 
 ---
