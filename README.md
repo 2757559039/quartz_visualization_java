@@ -1,41 +1,48 @@
-# Quartiz Visualization 项目使用手册
+**Read this in other languages: [English](README.md), [中文](README_zh.md).**
+
+
+# Quartiz Visualization Project User Manual
 
 ---
 
-##  目录
+## Table of Contents
 
-1. [项目概述](#1-项目概述)  
-2. [环境准备](#2-环境准备)  
-3. [快速入门](#3-快速入门)  
-4. [功能详解](#4-功能详解)
-6. [高级功能](#5-高级功能)  
-7. [常见问题（FAQ）](#6-常见问题faq)  
-8. [注意事项](#7-注意事项)  
+1. [Project Overview](#1-project-overview)  
+2. [Environment Setup](#2-environment-setup)  
+3. [Quick Start](#3-quick-start)  
+4. [Feature Details](#4-feature-details)
+5. [Advanced Features](#5-advanced-features)  
+6. [FAQ](#6-faq)  
+7. [Important Notes](#7-important-notes)  
 
-## 1. 项目概述
-本项目是基于传统定时框架quartz的升级解决方案，提供**可视化任务编排**、**动态化脚本管理**和**实时监控**三大核心功能，支持以下场景：  
-- 动态调整定时任务逻辑（无需重启）  
-- 多触发器或任务灵活挂载与参数修改  
-- 任务执行状态实时监控与历史记录追溯
-同时为延迟问题,提出全新的解决方案
+## 1. Project Overview
+This project is an upgraded solution based on the traditional Quartz scheduling framework, providing three core features:  
+- **Visual Task Orchestration**  
+- **Dynamic Script Management**  
+- **Real-time Monitoring**  
 
+Supported scenarios:  
+- Dynamically adjust scheduled task logic (without restarting)  
+- Flexible mounting/modification of multiple triggers or tasks  
+- Real-time monitoring of task execution status and historical record tracing  
+Introduces innovative solutions for latency issues.
 
-**技术栈**：  
-- 前端：Vue.js  
-- 动态脚本：Groovy  
-- 监控：SSE（实时推送）、MySQL（数据存储）  
-- 后端：Spring Boot  3.2.8 (如果是3.4版本存在适配性问题!)
+**Technology Stack**:  
+- Frontend: Vue.js  
+- Dynamic Scripts: Groovy  
+- Monitoring: SSE (real-time push), MySQL (data storage)  
+- Backend: Spring Boot 3.2.8 (Note: Compatibility issues exist with 3.4 version!)
 
-## 2. 环境准备
-### 2.1 运行环境
+## 2. Environment Setup
+### 2.1 Runtime Environment
 - JDK 17 
 - MySQL 8.0.11
-- Maven 3.9.5（后端依赖管理）
-- springboot 
+- Maven 3.9.5 (Backend dependency management)
+- Spring Boot 
 
-### 2.2 初始化配置
-#### Step 1：添加项目依赖
-在 `pom.xml` 中引入核心库：
+### 2.2 Initial Configuration
+#### Step 1: Add Dependencies
+Add core library in `pom.xml`:
 ```xml
 <dependency>
     <groupId>io.github.2757559039</groupId>
@@ -44,11 +51,11 @@
 </dependency>
 ```
 
-#### Step 2：配置主启动类
-在 Spring Boot 启动类添加包扫描注解：
+#### Step 2: Configure Main Class
+Add package scan annotation in Spring Boot main class:
 ```java
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.visualization.cloud"}) // 关键注解
+@ComponentScan(basePackages = {"com.visualization.cloud"}) // Critical annotation
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -56,7 +63,7 @@ public class Application {
 }
 ```
 
-#### Step 3：设置 application.yml
+#### Step 3: application.yml Configuration
 ```yml
 server :
   port : 8002
@@ -64,7 +71,6 @@ spring:
   application:
     name: test
   jackson:
-    # json 序列化排除值为 null 的属性
     default-property-inclusion: non_null
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -79,7 +85,7 @@ mybatis-plus:
 org:
   quartz:
     scheduler:
-      instance-name: cluster_scheduler #建议每一个服务拥有不同的名称,来隔绝定时任务框架的影响
+      instance-name: cluster_scheduler # Recommended unique name per service
       instance-id: AUTO
       rmi-export: false
       rmi-proxy: false
@@ -115,7 +121,8 @@ org:
       password: 123456
       maxConnections: 5
 ```
-#### Step 4：数据库初始化
+
+#### Step 4: Database Initialization
 ```sql
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
@@ -429,296 +436,170 @@ CREATE TABLE `v_sse_send_info` (
 
 ```
 
-#### Step 5：前端构建
-[使用配套前端]访问前端仓库,拉取前端组件:https://github.com/2757559039/quartz_visualization_vue 
-并选择其端口号,即可完成配置,多个微服务可以共用一个前端框架
+#### Step 5: Frontend Setup
+Use companion frontend repository:  
+https://github.com/2757559039/quartz_visualization_vue  
+Multiple microservices can share one frontend instance.
 
-## 3. 自定义类快速入门
-**目标**：创建四大自定义类
-
-### 创建自定义job类
-创建job逻辑类必须要继承QuartzJobBeanAbstract并实现executeInternal方法
+## 3. Quick Start: Custom Classes
+### Custom Job Class
+Must inherit `QuartzJobBeanAbstract`:
 ```java
-public class testjob extends QuartzJobBeanAbstract {
+public class TestJob extends QuartzJobBeanAbstract {
     @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        System.out.println("testjob");
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateStr = dateformat.format(System.currentTimeMillis());
-        
-        System.out.println("执行时间："dateStr  );
+    protected void executeInternal(JobExecutionContext context) {
+        System.out.println("TestJob executed at: " + 
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
     }
 }
-
 ```
-### 创建自定义trigger类
-必须要继承TriggerAbstract,并且如果是创建触发器,则重写对应类别的create前缀方法
-```java
-public class triiger extends TriggerAbstract {
 
-@Override
-    public CronTrigger CreateCronTrigger(JobDetail jobDetail) throws ClassNotFoundException {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        // 将当前时间加1秒
-        LocalDateTime newDateTime = currentDateTime.plusSeconds(1);
-        // 定义格式化模式
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        // 将LocalDateTime格式化为字符串
-        String formattedDate = newDateTime.format(formatter);
-    System.out.println("执行了子类的");
-    CronTrigger a=
-            TriggerBuilder.newTrigger()
-            .withIdentity("1234","1234")
-            .withSchedule(CronScheduleBuilder
-                    .cronSchedule("0/1 * * * * ?")
-            )
-            .startAt(Date.valueOf(formattedDate))
-            .startNow()
+### Custom Trigger Class
+Must inherit `TriggerAbstract`:
+```java
+public class CustomTrigger extends TriggerAbstract {
+    @Override
+    public CronTrigger CreateCronTrigger(JobDetail jobDetail) {
+        return TriggerBuilder.newTrigger()
+            .withIdentity("trigger1", "group1")
+            .withSchedule(CronScheduleBuilder.cronSchedule("0/1 * * * * ?"))
             .forJob(jobDetail)
-            // 设置结束时间,默认无穷大
-            .endAt(Date.valueOf("2099-12-31"))
-            //设置优先级
-            .withPriority(5)
             .build();
-    System.out.println(a);
-        return a;
-
     }
-
-
 }
 ```
-### 创建自定义jobdetial类
-继承CreatJobDetail并实现对应的方法,同时必须构造器注入applicationContext
-```java
-public class DefaultJobDetail111 extends CreatJobDetail {
-    public DefaultJobDetail111(ApplicationContext applicationContext) {
-        super(applicationContext);
-    }
 
+### Custom JobDetail Class
+Must inherit `CreatJobDetail`:
+```java
+public class CustomJobDetail extends CreatJobDetail {
+    public CustomJobDetail(ApplicationContext ctx) { super(ctx); }
+    
     @Override
-    public JobDetail createdetail(String Jobclassname, String Jobname, String Jobgroup, String Description) throws ClassNotFoundException {
-        Class<? extends QuartzJobBeanAbstract> jobClass = this.applicationContext.getType(Jobclassname).asSubclass(QuartzJobBeanAbstract.class);
-        System.out.println(jobClass);
-        JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(Jobname, Jobgroup).withDescription(Description).storeDurably().build();
-        return jobDetail;
+    public JobDetail createdetail(String className, String name, 
+                                  String group, String desc) {
+        // Implementation
     }
-
-
 }
 ```
-### 创建自定义更新触发器类
-必须要继承TriggerAbstract,并且如果是更新触发器,则重写对应类别的update前缀方法
+
+### Custom Trigger Update Class
+Must inherit `TriggerAbstract`:
 ```java
-public class update_trigger111 extends TriggerAbstract {
+public class UpdateTrigger extends TriggerAbstract {
     @Override
-    public CronTrigger updateCrontrigger (TriggerBuilder triggerBuilder){
-        CronTrigger build =(CronTrigger)  triggerBuilder.withSchedule(
-                        CronScheduleBuilder
-                                .cronSchedule("2/10 * * * * ?")
-                                // 设置时区,默认上海
-                                .inTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
-                )
-                .startAt(Date.valueOf("2024-12-13"))
-                // 设置结束时间,默认无穷大
-                .endAt(Date.valueOf("9999-12-31"))
-                //设置优先级
-                .withPriority(Integer.parseInt("5"))
-                .build();
-
-        return build;
-
+    public CronTrigger updateCronTrigger(TriggerBuilder builder) {
+        // Update logic
     }
 }
-
 ```
 
+## 4. Feature Details
+### 4.1 Visual Module
+#### 4.1.1 Add Operations
+- **New Task**: Supports default mode (direct parameters) or custom mode (Groovy scripts)
+- **Mount Trigger**: Similar to task creation but selects existing jobs
+- **Add Idle Task**: Create tasks without immediate triggers
 
-   
-## 4. 功能详解
-### 4.1 可视化模块
-#### 4.1.1 增加策略
-- **新增任务**  
-  支持两种模式：  
-  - **默认模式**：直接填写类名、分组、触发器参数  
-  - **自定义模式**：需先在 **脚本管理** 中上传 Groovy 脚本并注册为 Bean  
-  
-- **挂载触发器**  
-  同样支持两种模式：  
-  和新增任务类似,但是是通过选择任务分组,任务名的方法来设置任务名,且无法设置任务的详细属性,只能设置触发器
-  - **默认模式**：直接填写类名、分组、触发器参数  
-  - **自定义模式**：需先在 **脚本管理** 中上传 Groovy 脚本并注册为 Bean  
-  
-- **添加空闲任务**  
-添加一个没有触发器等待调度的任务
-  同样支持两种模式：  
-  - **默认模式**：直接填写类名、分组、
-  - **自定义模式**：需先在 **脚本管理** 中上传 Groovy 脚本并注册为 Bean  
+#### 4.1.2 Delete Operations
+- Delete Task (with all triggers)
+- Delete Single Trigger
+- Delete All (Dangerous!)
 
-#### 4.1.2 删除策略
-- **删除任务**  
-删除一个任务连同这个任务所挂载的所有触发器也一并删除
+#### 4.1.3 Modify Operations
+- Update Trigger Parameters
+- Replace Trigger Type
+- Modify Task Class
 
-- **删除触发器**  
-删除一个触发器
+#### 4.1.4 Query Operations
+- Group-based filtering
+- Fuzzy search across multiple fields
 
-- **删除所有任务和所有触发器**  
-慎用!!!
-
-#### 4.1.3 修改策略
-- **更改触发器参数**  
-  同样支持两种模式：  
-  - **默认模式**：重新填写需要更新的参数
-  - **自定义模式**：需先在 **脚本管理** 中上传 Groovy 脚本并注册为 Bean,并且要注意,上传的类的类别必须是带有update前缀的,同时在编写脚本时候,要实现对应触发器的update方法,而不是普通的createtrigger方法
-
-- **更换触发器**  
-选择旧的触发器,并选择创建新的触发器的参数,这个操作可以更改触发器的类别
-
-- **更改任务**  
-可以更改任务的job类,和任务的描述
-
-
-#### 4.1.4 查询策略
-- **根据分组查询**  
-直接选完事了
-
-- **输入框模糊搜索**  
-同时直接匹配四个值,任务名,任务组,任务类名,描述
-
-#### 4.1.5 启动策略
-- **恢复任务**  
-暂停这个任务下的所有触发器
-
-- **恢复触发器**  
-单独恢复某个触发器
-
-- **恢复所有任务和所有触发器**  
-恢复所有任务和触发器,同时开启`立即执行一次`的功能
-
-#### 4.1.6 停止策略
-- **暂停任务**  
-暂停这个任务下的所有触发器,但是触发器可以单独恢复
-
-- **暂停触发器**  
-单独暂停某个触发器
-
-- **暂停所有任务和所有触发器**  
-同时所有新增的触发器或任务都默认是暂停状态,且禁用`立即执行一次`的功能
-
-
-### 4.2 动态化模块
-#### 4.2.1 上传功能
-**上传脚本**  
-   - 进入 **脚本管理** > **上传脚本**，填写 Groovy 脚本信息  
-   - 示例脚本：  
-     ```groovy
-     class CustomJob {
-         void execute() {
-             println "Dynamic Job Executed!"
-         }
-     }
-     ```
-	 
-#### 4.2.2 脚本管理功能
-
-**基本功能**  
-   - **安装**：将脚本注册为 Spring Bean，并被groovy编译,供定时框架发现和使用  
-   - **删除**：从数据库直接删除
-   - **查看**: 查看脚本内容
-   
-   
-**更新**
-可以更新脚本内容,除了job在更改后,会直接影响定时框架,其他的更新,只是更新了任务和触发器的构造器,已经构造出的jobdetial和trigger不会有影响
-
-#### 4.2.3 虚拟类管理功能
-**卸载**
-从 JVM 和 Bean 容器中移除虚拟类
-
-### 4.3 监控平台模块
-#### 4.3.1 监控模块的使用前提
-首先需要在继承了QuartzJobBeanAbstract中使用setSseData
-```java
-protected  final void setSseData(String key, String data)
+### 4.2 Dynamic Script Module
+#### 4.2.1 Upload Scripts
+```groovy
+class DynamicJob {
+    void execute() {
+        println "Dynamic execution at ${new Date()}"
+    }
+}
 ```
-setSseData存在两个参数,一个是唯一标识key,一个是数据,可以传输任意你需要的数据,将其转成字符串形式即可
-key的来源是持久化在数据库中的日志的key的所有种类列表,所以无法额外删除和创建空key,只能在job类中创建
-#### 4.3.2 日志管理的使用
-选择key,和日期既可以实现以下两个功能
+#### 4.2.2 Script Management Features
 
-- **实时监控**  
-  - 查看任务日志（SSE实时推送） 
-- **历史记录**  
-  - 按日期筛选任务执行日志，支持清空过期数据（保留 30 天）  
+**Core Functions**  
+   • **Install**: Register scripts as Spring Beans through Groovy compilation, making them discoverable by the scheduling framework  
+   • **Delete**: Permanently remove scripts from the database  
+   • **View**: Inspect script content  
 
-## 5. 高级功能
-提供延迟任务的另一种解决方案
-使用方法:
-### 第一步
-编写一个继承了DelayedJob的逻辑类,并实现自己的逻辑,在逻辑类中使用的一些需要额外注入的对象或类,传统的quartz的job类是不支持的,但在这里,你可以随意的使用,并在后面注入
+**Updates**  
+Script content can be modified. For job classes:  
+• Changes immediately affect the scheduling framework  
+• For other components (tasks/triggers):  
+  • Updates only modify future constructor configurations  
+  • Existing JobDetails and Triggers remain unaffected  
+
+#### 4.2.3 Virtual Class Management  
+**Uninstallation**  
+Completely remove virtual classes from both the JVM and Spring Bean container
+
+### 4.3 Monitoring Module
+#### 4.3.1 Implementation
+In job classes:
 ```java
-public class test extends  DelayedJob {
+protected final void setSseData(String key, String data) {
+    // Send monitoring data
+}
+```
+
+#### 4.3.2 Usage
+By selecting a key and date, you can enable the following two functionalities
+- Real-time monitoring via SSE
+- Historical log filtering/cleaning
+
+## 5. Advanced Features
+### Latency Solution Implementation
+1. Create delayed job class:
+```java
+public class PaymentTimeoutJob extends DelayedJob {
     @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+    protected void executeInternal(JobExecutionContext context) {
+        // Order timeout logic
     }
 }
 ```
-### 第二步
-在任何你需要的地方,使用createDelayedQueue静态方法,动态的构造一个定时任务,并通过killDelayedQueue来管理其生命周期的意外结束(例如在支付场景中,用户在倒计时结束前支付了订单),正常的执行结束会由框架自动清理
-使用createDelayedQueue你需要传入一个你编写的逻辑类,一个你在逻辑类中所使用的其他类,一个唯一标识,一个你希望的定时任务的时长(毫秒级别)
+
+2. Usage:
 ```java
-    public static void createDelayedQueue(DelayedJob job, Object parameter, String ID,Long time ) throws SchedulerException {
-        jobService.createDelayedQueue(job, parameter,ID,time);
-    }
+// Create delayed task
+QuartzManager.createDelayedQueue(new PaymentTimeoutJob(), orderId, "ORDER_123", 900_000);
 
-    //编程式管理手动删除延时队列
-    public static void killDelayedQueue(String ID) throws SchedulerException {
-        JobKey jobKey = JobKey.jobKey(ID,"DelayedQueue");
-        scheduler.deleteJob(jobKey);
-        dynamicBeanOperate.unregisterBean(jobKey.getName());
-    }
+// Cancel task
+QuartzManager.killDelayedQueue("ORDER_123");
 ```
 
-## 6. 常见问题（FAQ）
-**Q1：任务状态为“已停止”，但触发器仍在执行**  
-- 检查是否有其他触发器挂载到该任务，需单独停止触发器  
+## 6. FAQ
+**Q1: Task shows "Stopped" but trigger still fires**  
+Check for other active triggers attached to the task.
 
-**Q2：Groovy 脚本上传后未生效**  
-- 确认脚本已点击 **安装**，且类名与任务配置中的类名一致  
+**Q2: Groovy script not taking effect**  
+Confirm script installation and class name consistency.
 
-**Q3：监控数据未更新**  
-- 检查 SSE 连接是否正常，或清空浏览器缓存后重试
+**Q3: Monitoring data not updating**  
+Verify SSE connection and clear browser cache.
 
-**Q4：监控数据卡顿延迟**  
-- 可以根据需要修改数据库中的事务里的删除时间,默认设置为一个月清除一次
-- 同时尽量减少秒级别的监控需求
-
-## 7. 注意事项
-- **数据安全**：清空历史记录操作不可逆，建议定期备份数据库  
-- **脚本规范**：Groovy 脚本需实现无参 `execute()` 方法,遵循Groovy规范,经过检验,无法如下的使用内联写法.在绝大部分情况下,Groovy是与java语法一致的
-```
-return new Object();
-```
-- **配置关键点**：  
-  - application中关于quartz的配置,除名字外,不要随意更改
-  - 调整 `thread-count` 根据服务器 CPU 核心数优化性能  
-- **触发器冲突**：避免为同一任务设置过多短间隔触发器，防止资源竞争  
+## 7. Important Notes
+• **Data Security**: Regular database backups recommended
+• **Script Standards**: Groovy scripts must implement parameterless `execute()`
+• **Configuration Keys**: Do not modify Quartz configuration except instance names
+• **Trigger Conflicts**: Avoid excessive short-interval triggers for same job
 
 ---
 
-**获取支持**  
-- 问题反馈：2757559039@qq.com
-- 微信号: Loves_Philosophy
-- 文档更新：访问项目 Git 仓库查看最新版本  
-
---- 
-
-**版本：0.0.12 | 更新日期：2025-03-13**
-
+**Support Contact**  
+• Email: 2757559039@qq.com  
+• WeChat: Loves_Philosophy  
+• Docs: Project GitHub Repository  
 
 ---
 
-
-
-
-
-
+**Version: 0.0.12 | Updated: 2025-03-13**
