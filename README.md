@@ -655,7 +655,7 @@ key的来源是持久化在数据库中的日志的key的所有种类列表,所�
 使用方法:
 ### 第一步
 编写一个继承了DelayedJob的逻辑类,并实现自己的逻辑,在逻辑类中使用的一些需要额外注入的对象或类,传统的quartz的job类是不支持的,但在这里,你可以随意的使用,并在后面注入
-```
+```java
 public class test extends  DelayedJob {
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
@@ -665,7 +665,7 @@ public class test extends  DelayedJob {
 ### 第二步
 在任何你需要的地方,使用createDelayedQueue静态方法,动态的构造一个定时任务,并通过killDelayedQueue来管理其生命周期的意外结束(例如在支付场景中,用户在倒计时结束前支付了订单),正常的执行结束会由框架自动清理
 使用createDelayedQueue你需要传入一个你编写的逻辑类,一个你在逻辑类中所使用的其他类,一个唯一标识,一个你希望的定时任务的时长(毫秒级别)
-```
+```java
     public static void createDelayedQueue(DelayedJob job, Object parameter, String ID,Long time ) throws SchedulerException {
         jobService.createDelayedQueue(job, parameter,ID,time);
     }
