@@ -123,7 +123,7 @@ org:
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: visualization
--- ------------------------------------------------------
+-- --------------------------------------------------------
 -- Server version	8.0.33
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -138,13 +138,13 @@ org:
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `qrtz_blob_triggers`
+-- Table structure for table `QRTZ_BLOB_TRIGGERS`
 --
 
-DROP TABLE IF EXISTS `qrtz_blob_triggers`;
+DROP TABLE IF EXISTS `QRTZ_BLOB_TRIGGERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_blob_triggers` (
+CREATE TABLE `QRTZ_BLOB_TRIGGERS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名',
   `TRIGGER_NAME` varchar(200) NOT NULL COMMENT '     触发器名称',
   `TRIGGER_GROUP` varchar(200) NOT NULL COMMENT '触发器组',
@@ -155,13 +155,13 @@ CREATE TABLE `qrtz_blob_triggers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_calendars`
+-- Table structure for table `QRTZ_CALENDARS`
 --
 
-DROP TABLE IF EXISTS `qrtz_calendars`;
+DROP TABLE IF EXISTS `QRTZ_CALENDARS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_calendars` (
+CREATE TABLE `QRTZ_CALENDARS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `CALENDAR_NAME` varchar(200) NOT NULL,
   `CALENDAR` blob NOT NULL,
@@ -170,13 +170,13 @@ CREATE TABLE `qrtz_calendars` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_cron_triggers`
+-- Table structure for table `QRTZ_CRON_TRIGGERS`
 --
 
-DROP TABLE IF EXISTS `qrtz_cron_triggers`;
+DROP TABLE IF EXISTS `QRTZ_CRON_TRIGGERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_cron_triggers` (
+CREATE TABLE `QRTZ_CRON_TRIGGERS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `TRIGGER_NAME` varchar(200) NOT NULL COMMENT '     触发器名称',
   `TRIGGER_GROUP` varchar(200) NOT NULL COMMENT '触发器组',
@@ -187,13 +187,13 @@ CREATE TABLE `qrtz_cron_triggers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_fired_triggers`
+-- Table structure for table `QRTZ_FIRED_TRIGGERS`
 --
 
-DROP TABLE IF EXISTS `qrtz_fired_triggers`;
+DROP TABLE IF EXISTS `QRTZ_FIRED_TRIGGERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_fired_triggers` (
+CREATE TABLE `QRTZ_FIRED_TRIGGERS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `ENTRY_ID` varchar(95) NOT NULL COMMENT '组标识',
   `TRIGGER_NAME` varchar(200) NOT NULL COMMENT '触发器名称',
@@ -218,13 +218,13 @@ CREATE TABLE `qrtz_fired_triggers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_job_details`
+-- Table structure for table `QRTZ_JOB_DETAILS`
 --
 
-DROP TABLE IF EXISTS `qrtz_job_details`;
+DROP TABLE IF EXISTS `QRTZ_JOB_DETAILS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_job_details` (
+CREATE TABLE `QRTZ_JOB_DETAILS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `JOB_NAME` varchar(200) NOT NULL COMMENT '作业名称',
   `JOB_GROUP` varchar(200) NOT NULL COMMENT '作业组',
@@ -242,13 +242,13 @@ CREATE TABLE `qrtz_job_details` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_locks`
+-- Table structure for table `QRTZ_LOCKS`
 --
 
-DROP TABLE IF EXISTS `qrtz_locks`;
+DROP TABLE IF EXISTS `QRTZ_LOCKS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_locks` (
+CREATE TABLE `QRTZ_LOCKS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `LOCK_NAME` varchar(40) NOT NULL COMMENT '锁名称',
   PRIMARY KEY (`SCHED_NAME`,`LOCK_NAME`) USING BTREE
@@ -256,13 +256,13 @@ CREATE TABLE `qrtz_locks` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_paused_trigger_grps`
+-- Table structure for table `QRTZ_PAUSED_TRIGGER_GRPS`
 --
 
-DROP TABLE IF EXISTS `qrtz_paused_trigger_grps`;
+DROP TABLE IF EXISTS `QRTZ_PAUSED_TRIGGER_GRPS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_paused_trigger_grps` (
+CREATE TABLE `QRTZ_PAUSED_TRIGGER_GRPS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `TRIGGER_GROUP` varchar(200) NOT NULL COMMENT '触发器组',
   PRIMARY KEY (`SCHED_NAME`,`TRIGGER_GROUP`) USING BTREE
@@ -270,13 +270,13 @@ CREATE TABLE `qrtz_paused_trigger_grps` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_scheduler_state`
+-- Table structure for table `QRTZ_SCHEDULER_STATE`
 --
 
-DROP TABLE IF EXISTS `qrtz_scheduler_state`;
+DROP TABLE IF EXISTS `QRTZ_SCHEDULER_STATE`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_scheduler_state` (
+CREATE TABLE `QRTZ_SCHEDULER_STATE` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `INSTANCE_NAME` varchar(200) NOT NULL COMMENT '实例名称',
   `LAST_CHECKIN_TIME` bigint NOT NULL COMMENT '最后的检查时间',
@@ -286,13 +286,13 @@ CREATE TABLE `qrtz_scheduler_state` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_simple_triggers`
+-- Table structure for table `QRTZ_SIMPLE_TRIGGERS`
 --
 
-DROP TABLE IF EXISTS `qrtz_simple_triggers`;
+DROP TABLE IF EXISTS `QRTZ_SIMPLE_TRIGGERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_simple_triggers` (
+CREATE TABLE `QRTZ_SIMPLE_TRIGGERS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `TRIGGER_NAME` varchar(200) NOT NULL COMMENT '触发器名称',
   `TRIGGER_GROUP` varchar(200) NOT NULL COMMENT '触发器组',
@@ -304,13 +304,13 @@ CREATE TABLE `qrtz_simple_triggers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_simprop_triggers`
+-- Table structure for table `QRTZ_SIMPROP_TRIGGERS`
 --
 
-DROP TABLE IF EXISTS `qrtz_simprop_triggers`;
+DROP TABLE IF EXISTS `QRTZ_SIMPROP_TRIGGERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_simprop_triggers` (
+CREATE TABLE `QRTZ_SIMPROP_TRIGGERS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `TRIGGER_NAME` varchar(200) NOT NULL COMMENT '触发器名称',
   `TRIGGER_GROUP` varchar(200) NOT NULL COMMENT '触发器组',
@@ -330,13 +330,13 @@ CREATE TABLE `qrtz_simprop_triggers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `qrtz_triggers`
+-- Table structure for table `QRTZ_TRIGGERS`
 --
 
-DROP TABLE IF EXISTS `qrtz_triggers`;
+DROP TABLE IF EXISTS `QRTZ_TRIGGERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `qrtz_triggers` (
+CREATE TABLE `QRTZ_TRIGGERS` (
   `SCHED_NAME` varchar(120) NOT NULL COMMENT '计划名称',
   `TRIGGER_NAME` varchar(200) NOT NULL COMMENT '触发器名称',
   `TRIGGER_GROUP` varchar(200) NOT NULL COMMENT '触发器组',
