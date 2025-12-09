@@ -561,6 +561,9 @@ By selecting a key and date, you can enable the following two functionalities
 ## 5. Advanced Features
 ### Latency Solution Implementation
 1. Create delayed job class:
+Create a logic class that extends DelayedJob and implement your custom logic. Unlike traditional Quartz job classes which have limitations on dependency injection, this approach allows you to freely use and inject objects or classes required by your logic.
+
+Note: The injected object is passed as an Object type. While you can use this parameter, you must manually cast it to the correct type within your logic. Only one parameter object can be injected.
 ```java
 public class PaymentTimeoutJob extends DelayedJob {
     @Override
@@ -571,6 +574,9 @@ public class PaymentTimeoutJob extends DelayedJob {
 ```
 
 2. Usage:
+Use the static method createDelayedQueue anywhere you need to dynamically construct a scheduled task. You can manage the unexpected termination of its lifecycle via killDelayedQueue (e.g., in a payment scenario where the user pays for the order before the countdown ends). Normal completion of the task will be automatically cleaned up by the framework.
+
+To use createDelayedQueue, you need to pass in: the logic class you wrote, the object/parameter used in your logic class, a unique identifier (ID), and the desired duration for the task (in milliseconds).
 ```java
 // Create delayed task
 QuartzManager.createDelayedQueue(new PaymentTimeoutJob(), orderId, "ORDER_123", 900_000);
@@ -578,6 +584,29 @@ QuartzManager.createDelayedQueue(new PaymentTimeoutJob(), orderId, "ORDER_123", 
 // Cancel task
 QuartzManager.killDelayedQueue("ORDER_123");
 ```
+3.PS (Supported Methods)
+```java
+public static void createDelayedQueue(DelayedJob job, Object parameter, String iD, String triggerName) throws SchedulerException {
+        Trigger trigger = SpringContextHolder.getBean(triggerName);
+        jobService.createDelayedQueue(job, parameter, iD, trigger);
+    }
+
+    public static void createDelayedQueue(DelayedJob job, Object parameter, String ID, Long time) throws SchedulerException {
+        jobService.createDelayedQueue(job, parameter, ID, time);
+    }
+
+    public static void createDelayedQueue(DelayedJob job, Object parameter, String iD, LocalDateTime time) throws SchedulerException {
+        jobService.createDelayedQueue(job, parameter, iD, time);
+    }
+```
+
+Currently, we support three types of construction methods:
+
+(DelayedJob job, Object parameter, String iD, String triggerName): Pass in the job class, the parameter to inject, a unique ID, and the name of an existing trigger.
+
+(DelayedJob job, Object parameter, String ID, Long time): Same parameters as above; specifies the delay duration before execution (in milliseconds).
+
+(DelayedJob job, Object parameter, String ID, LocalDateTime time): Same parameters as above; specifies the exact start time for execution (precise to the second, supports yyyy-MM-dd HH:mm:ss format).
 
 ## 6. FAQ
 **Q1: Task shows "Stopped" but trigger still fires**  
