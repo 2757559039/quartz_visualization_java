@@ -56,6 +56,7 @@ Add package scan annotation in Spring Boot main class:
 ```java
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.visualization.cloud"}) // Critical annotation
+@Import(visualization.class)// Critical annotation
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
