@@ -658,6 +658,7 @@ key的来源是持久化在数据库中的日志的key的所有种类列表,所�
 使用方法:
 ### 第一步
 编写一个继承了DelayedJob的逻辑类,并实现自己的逻辑,在逻辑类中使用的一些需要额外注入的对象或类,传统的quartz的job类是不支持的,但在这里,你可以随意的使用,并在后面注入
+请注意,注入的是Object parameter,你可以使用parameter,但必须要自行强制转换类型,且只能注入一个
 ```java
 public class test extends  DelayedJob {
     @Override
@@ -680,6 +681,26 @@ public class test extends  DelayedJob {
         dynamicBeanOperate.unregisterBean(jobKey.getName());
     }
 ```
+### PS
+```java
+    public static void createDelayedQueue(DelayedJob job, Object parameter, String iD, String triggerName) throws SchedulerException {
+
+       Trigger trigger= SpringContextHolder.getBean(triggerName);
+        jobService.createDelayedQueue(job, parameter,iD,trigger);
+    }
+
+    public static void createDelayedQueue(DelayedJob job, Object parameter, String ID,Long time ) throws SchedulerException {
+        jobService.createDelayedQueue(job, parameter,ID,time);
+    }
+
+    public static void createDelayedQueue(DelayedJob job, Object parameter, String iD, LocalDateTime time) throws SchedulerException {
+        jobService.createDelayedQueue(job, parameter,iD,time);
+    }
+```
+目前阶段我们一共支持三种构造方法
+1.(DelayedJob job, Object parameter, String iD, String triggerName) 传入job类,注入参数,唯一性id,现有的触发器名称
+2.(DelayedJob job, Object parameter, String ID,Long time ) 同上参数,多久后开始执行(毫秒级别)
+3.(DelayedJob job, Object parameter, String ID,Long time ) 同上参数,什么时间开始执行(精确到秒级别,支持年月日时分秒的格式)
 
 ## 6. 常见问题（FAQ）
 **Q1：任务状态为“已停止”，但触发器仍在执行**  
