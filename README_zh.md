@@ -51,6 +51,7 @@
 ```java
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.visualization.cloud"}) // 关键注解
+@Import(visualization.class)// 关键注解
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
