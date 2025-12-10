@@ -44,7 +44,7 @@
 <dependency>
     <groupId>io.github.2757559039</groupId>
     <artifactId>quartz_visualization</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 
