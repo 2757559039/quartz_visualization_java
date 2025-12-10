@@ -47,10 +47,21 @@
 ```
 
 #### Step 2：配置主启动类
+可能会产生冲突的配置文件名称
+
+CascadingClassLoadHelper
+ClassScanner
+GroovyClassLoaderKilIClassEnhance
+GroovyConfig
+SchedulerConfig
+ScriptBuilderMyBatisPlusConfig
+SpringContextHolder
+SSECacheConfig
+
 在 Spring Boot 启动类添加包扫描注解：
 ```java
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.visualization.cloud"}) // 关键注解
+@ComponentScan(basePackages = {"com.visualization.cloud","你自己的包的根路径地址,例如org.example"}) // 关键注解
 @Import(visualization.class)// 关键注解
 public class Application {
     public static void main(String[] args) {
