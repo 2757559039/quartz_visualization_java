@@ -26,12 +26,14 @@ Supported scenarios:
 - Flexible mounting/modification of multiple triggers or tasks  
 - Real-time monitoring of task execution status and historical record tracing  
 Introduces innovative solutions for latency issues.
+This version is now compatible with MyBatis-Flex.
 
 **Technology Stack**:  
 - Frontend: Vue.js  
 - Dynamic Scripts: Groovy  
 - Monitoring: SSE (real-time push), MySQL (data storage)  
 - Backend: Spring Boot 3.2.8 (Note: Compatibility issues exist with 3.4 version!)
+- DAO: mybatis-plus
 
 ## 2. Environment Setup
 ### 2.1 Runtime Environment
@@ -47,7 +49,7 @@ Add core library in `pom.xml`:
 <dependency>
     <groupId>io.github.2757559039</groupId>
     <artifactId>quartz_visualization</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 
