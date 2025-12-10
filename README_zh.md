@@ -28,7 +28,7 @@
 - 动态脚本：Groovy  
 - 监控：SSE（实时推送）、MySQL（数据存储）  
 - 后端：Spring Boot  3.2.8 (如果是3.4版本存在适配性问题!)
-- DAO:mybatis-plus
+- DAO: mybatis-plus
 
 ## 2. 环境准备
 ### 2.1 运行环境
