@@ -52,11 +52,29 @@ Add core library in `pom.xml`:
 ```
 
 #### Step 2: Configure Main Class
+Configuration file names that may cause conflicts:
+
+CascadingClassLoadHelper
+
+ClassScanner
+
+GroovyClassLoaderKilIClassEnhance
+
+GroovyConfig
+
+SchedulerConfig
+
+ScriptBuilderMyBatisPlusConfig
+
+SpringContextHolder
+
+SSECacheConfig
 Add package scan annotation in Spring Boot main class:
 ```java
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.visualization.cloud"}) // Critical annotation
-@Import(visualization.class)// Critical annotation
+// Key annotation: Scan both the third-party package and your own package
+@ComponentScan(basePackages = {"com.visualization.cloud", "your.own.package.root.path.e.g.org.example"}) 
+@Import(visualization.class) // Key annotation: Import specific configuration
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
