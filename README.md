@@ -25,8 +25,8 @@ Supported scenarios:
 - Dynamically adjust scheduled task logic (without restarting)  
 - Flexible mounting/modification of multiple triggers or tasks  
 - Real-time monitoring of task execution status and historical record tracing  
-Introduces innovative solutions for latency issues.
-This version is now compatible with MyBatis-Flex.
+- Introduces innovative solutions for latency issues.
+- This version is now compatible with MyBatis-Flex.
 
 **Technology Stack**:  
 - Frontend: Vue.js  
