@@ -458,7 +458,75 @@ CREATE TABLE `v_sse_send_info` (
 
 ```
 
-#### Step 5: Frontend Setup
+#### Step 5: Configuration Class Setup (Must-read for MyBatis-Plus Users)
+To ensure compatibility, qv internally uses an independent version of MyBatis-Plus. This causes the auto-configuration and YAML settings of MyBatis-Plus in the main project to become ineffective. Therefore, a configuration class is required to resolve this. A runnable reference template is provided here; please add additional features as needed.
+```java
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import org.apache.ibatis.logging.stdout.StdOutImpl; // 1. 导入日志实现类
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+import javax.sql.DataSource;
+
+@Configuration
+// 扫描主项目的 Mapper
+@MapperScan(
+        basePackages = "org.example.DAL.mapper",
+        sqlSessionFactoryRef = "mainSqlSessionFactory"
+)
+public class MyBatisPlusConfig {
+
+    @Bean
+    @Primary
+    public MybatisPlusInterceptor mainInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return interceptor;
+    }
+
+    @Bean("mainSqlSessionFactory")
+    @Primary
+    public SqlSessionFactory mainSqlSessionFactory(DataSource dataSource,
+                                                   MybatisPlusInterceptor interceptor) throws Exception {
+        MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
+        bean.setDataSource(dataSource);
+        bean.setPlugins(interceptor);
+
+        // 1. 基础配置 & SQL 打印
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        configuration.setMapUnderscoreToCamelCase(true);
+        // 【关键】开启控制台 SQL 打印
+        configuration.setLogImpl(StdOutImpl.class);
+        bean.setConfiguration(configuration);
+
+        // 2. 全局配置 (解决 YML 配置失效问题)
+        // 因为手动接管了 Factory，YML 中的 id-type: auto 会失效，必须在这里重新配置
+        GlobalConfig globalConfig = new GlobalConfig();
+        GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
+
+        // 如果你的数据库主键是自增的，请保留这行；如果是雪花算法，请注释掉
+        dbConfig.setIdType(IdType.AUTO);
+
+        globalConfig.setDbConfig(dbConfig);
+        bean.setGlobalConfig(globalConfig);
+
+        return bean.getObject();
+    }
+}
+```
+
+
+
+#### Step 6: Frontend Setup
 Use companion frontend repository:  
 https://github.com/2757559039/quartz_visualization_vue  
 Multiple microservices can share one frontend instance.
@@ -579,7 +647,7 @@ By selecting a key and date, you can enable the following two functionalities
 - Historical log filtering/cleaning
 
 ## 5. Advanced Features
-### Latency Solution Implementation
+###5.1 Latency Solution Implementation
 1. Create delayed job class:
 Create a logic class that extends DelayedJob and implement your custom logic. Unlike traditional Quartz job classes which have limitations on dependency injection, this approach allows you to freely use and inject objects or classes required by your logic.
 
@@ -628,6 +696,23 @@ Currently, we support three types of construction methods:
 
 (DelayedJob job, Object parameter, String ID, LocalDateTime time): Same parameters as above; specifies the exact start time for execution (precise to the second, supports yyyy-MM-dd HH:mm:ss format).
 
+### 5.2 Programmatic Management
+By following this method, you can directly manage the creation of tasks. The key lies in using the @Lazy annotation.
+```java
+@Component
+public class test {
+
+     @Resource
+     @Lazy
+     private IJobService iJobService;
+
+      public void test() throws SchedulerException {
+          System.out.println(iJobService);
+          System.out.println(iJobService.getAllJobs());
+      }
+}
+```
+
 ## 6. FAQ
 **Q1: Task shows "Stopped" but trigger still fires**  
 Check for other active triggers attached to the task.
@@ -653,4 +738,4 @@ Verify SSE connection and clear browser cache.
 
 ---
 
-**Version: 0.0.12 | Updated: 2025-03-13**
+**Version: 0.1.12 | Updated: 2025-12-10**
