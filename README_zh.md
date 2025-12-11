@@ -444,8 +444,75 @@ CREATE TABLE `v_sse_send_info` (
 -- Dump completed on 2025-03-10 20:18:44
 
 ```
+#### Step 5：设置 配置类(mybatis-plus使用者须看)
+为了保证兼容性,qv底层使用了独立的一套mybatis-plus,这会导致主项目的mybatis-plus的自动配置,yml配置失效,需要使用配置类才可以解决,这里给出可运行的参考模板
+其他更多功能请自行添加
+```java
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import org.apache.ibatis.logging.stdout.StdOutImpl; // 1. 导入日志实现类
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
-#### Step 5：前端构建
+import javax.sql.DataSource;
+
+@Configuration
+// 扫描主项目的 Mapper
+@MapperScan(
+        basePackages = "org.example.DAL.mapper",
+        sqlSessionFactoryRef = "mainSqlSessionFactory"
+)
+public class MyBatisPlusConfig {
+
+    @Bean
+    @Primary
+    public MybatisPlusInterceptor mainInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return interceptor;
+    }
+
+    @Bean("mainSqlSessionFactory")
+    @Primary
+    public SqlSessionFactory mainSqlSessionFactory(DataSource dataSource,
+                                                   MybatisPlusInterceptor interceptor) throws Exception {
+        MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
+        bean.setDataSource(dataSource);
+        bean.setPlugins(interceptor);
+
+        // 1. 基础配置 & SQL 打印
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        configuration.setMapUnderscoreToCamelCase(true);
+        // 【关键】开启控制台 SQL 打印
+        configuration.setLogImpl(StdOutImpl.class);
+        bean.setConfiguration(configuration);
+
+        // 2. 全局配置 (解决 YML 配置失效问题)
+        // 因为手动接管了 Factory，YML 中的 id-type: auto 会失效，必须在这里重新配置
+        GlobalConfig globalConfig = new GlobalConfig();
+        GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
+
+        // 如果你的数据库主键是自增的，请保留这行；如果是雪花算法，请注释掉
+        dbConfig.setIdType(IdType.AUTO);
+
+        globalConfig.setDbConfig(dbConfig);
+        bean.setGlobalConfig(globalConfig);
+
+        return bean.getObject();
+    }
+}
+```
+
+
+#### Step 6：前端构建
 [使用配套前端]访问前端仓库,拉取前端组件:https://github.com/2757559039/quartz_visualization_vue 
 并选择其端口号,即可完成配置,多个微服务可以共用一个前端框架
 
@@ -667,6 +734,7 @@ key的来源是持久化在数据库中的日志的key的所有种类列表,所�
   - 按日期筛选任务执行日志，支持清空过期数据（保留 30 天）  
 
 ## 5. 高级功能
+### 5.1延迟队列
 提供延迟任务的另一种解决方案
 使用方法:
 ### 第一步
@@ -715,6 +783,23 @@ public class test extends  DelayedJob {
 2.(DelayedJob job, Object parameter, String ID,Long time ) 同上参数,多久后开始执行(毫秒级别)
 3.(DelayedJob job, Object parameter, String ID,Long time ) 同上参数,什么时间开始执行(精确到秒级别,支持年月日时分秒的格式)
 
+### 5.2 编程式管理
+参照这个方法,即可直接管理任务的创建,关键在于使用@Lazy注解
+```java
+@Component
+public class test {
+
+     @Resource
+     @Lazy
+     private IJobService iJobService;
+
+      public void test() throws SchedulerException {
+          System.out.println(iJobService);
+          System.out.println(iJobService.getAllJobs());
+      }
+}
+```
+
 ## 6. 常见问题（FAQ）
 **Q1：任务状态为“已停止”，但触发器仍在执行**  
 - 检查是否有其他触发器挂载到该任务，需单独停止触发器  
@@ -749,7 +834,7 @@ return new Object();
 
 --- 
 
-**版本：0.0.12 | 更新日期：2025-03-13**
+**版本：0.1.12 | 更新日期：2025-12-10**
 
 
 ---
